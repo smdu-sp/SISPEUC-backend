@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id          Int     @id @default(autoincrement())
+  login       String? @db.VarChar(7)
+  nome        String? @db.VarChar(255)
+  permissao   Int?
+  status_user Int?    @default(0)
+
+  @@map("usuarios")
+}
+
+model Permissao {
+  id         Int         @id @default(autoincrement())
+  idservidor Int?
+  servidores servidores? @relation(fields: [idservidor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_permissoes_servidores")
+
+  @@index([idservidor], map: "FK_permissoes_servidores")
+  @@map("permissoes")
+}
+
+model servidores {
+  id            Int         @id @default(autoincrement())
+  nome          String      @default("0") @db.VarChar(255)
+  login          String     @unique() @default("0") @db.VarChar(50)
+  email         String      @default("0") @db.VarChar(255)
+  rf            String      @default("0") @db.VarChar(7)
+  unidade       String      @default("0") @db.VarChar(255)
+  obs           String      @default("0") @db.VarChar(255)
+  status_user   String?     @db.VarChar(50)
+  sigla_unidade String?     @db.VarChar(50)
+  permissoes    Permissao[]
+}
